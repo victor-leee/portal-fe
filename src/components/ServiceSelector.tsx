@@ -75,17 +75,17 @@ const ServiceSelector: React.FC<{
     }, []);
 
     const handleSelect = (k: Key[], e: {selected: boolean}) => {
+      if (!e.selected) {
+        onServiceSelect(undefined);
+        return;
+      }
       const key = k[0] as number;
       const service = id2ServiceNode.get(key);
       if (service === undefined) {
         message.error('service not found');
         return;
       }
-      if (e.selected) {
-        onServiceSelect(service);
-        return;
-      }
-      onServiceSelect(undefined);
+      onServiceSelect(service);
     }
 
     return (

@@ -6,6 +6,7 @@ import Layout, { Content } from 'antd/lib/layout/layout';
 
 import ServiceSelector from './components/ServiceSelector';
 import MainTab from './components/MainTab';
+import CreateService from './components/CreateService';
 import { ServiceNode } from './api/types';
 import { Alert, Button, Row, Space } from 'antd';
 
@@ -24,9 +25,7 @@ const App: React.FC<{}> = () => {
         <Space direction='vertical' size='middle' style={{display: 'flex'}}>
 
         <Row>
-          <Button type='primary'>
-            Create Service
-          </Button>
+          <CreateService/>
         </Row>
         <ServiceSelector onServiceSelect={onServiceSelect}/>
 

@@ -1,6 +1,8 @@
 import { ServiceNode } from "../api/types";
 import { Tabs } from 'antd';
-import { DeploymentUnitOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import { CloudServerOutlined, DeploymentUnitOutlined, IconProvider, InfoCircleOutlined } from "@ant-design/icons";
+
+import ServiceInfo from './ServiceInfo';
 
 const MainTab: React.FC<{
     serviceNode: ServiceNode
@@ -17,18 +19,31 @@ const MainTab: React.FC<{
                 </span>
             }
             >
-                Service Info
+                <ServiceInfo ServiceInfo={serviceNode}/>
                 </Tabs.TabPane>
             <Tabs.TabPane
             key={2}
             tab={
                 <span>
-                    <DeploymentUnitOutlined />
+                    <svg className="icon" aria-hidden={true}>
+                        <use xlinkHref="#icon-kubernetes"></use>
+                    </svg>
                     Deploy
                 </span>
             }
             >
                 Deployment
+            </Tabs.TabPane>
+            <Tabs.TabPane
+            key={3}
+            tab={
+                <span>
+                    <CloudServerOutlined />
+                    Configuration Center
+                </span>
+            }
+            >
+                Config
             </Tabs.TabPane>
         </Tabs>
         </>

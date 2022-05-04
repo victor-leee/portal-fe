@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { Table, Tag } from "antd";
 import { ServiceNode } from "../api/types";
 
 const columns = [
@@ -42,6 +42,12 @@ const columns = [
         title: 'Service Type',
         dataIndex: 'type',
         key: 'type',
+        render: (text: any) => {
+            if (text === 'sc_rpc') {
+                return <Tag color="#2db7f5">SCRPC</Tag>
+            }
+            return <Tag color="#2db7f5">HTTP</Tag>
+        }
     },
     {
         title: 'Custom Port',

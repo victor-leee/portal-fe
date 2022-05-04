@@ -1,6 +1,6 @@
 import './App.css';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Sider from 'antd/lib/layout/Sider';
 import Layout, { Content } from 'antd/lib/layout/layout';
 
@@ -8,7 +8,7 @@ import ServiceSelector from './components/ServiceSelector';
 import MainTab from './components/MainTab';
 import CreateService from './components/CreateService';
 import { ServiceNode } from './api/types';
-import { Alert, Button, Row, Space } from 'antd';
+import { Alert, Row, Space } from 'antd';
 
 const App: React.FC<{}> = () => {
 

@@ -1,6 +1,7 @@
 import { ServiceNode } from "../api/types";
 import { Tabs } from 'antd';
-import { CloudServerOutlined, DeploymentUnitOutlined, IconProvider, InfoCircleOutlined } from "@ant-design/icons";
+import { CloudServerOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import Deployment from './Deployment';
 
 import ServiceInfo from './ServiceInfo';
 
@@ -32,7 +33,7 @@ const MainTab: React.FC<{
                 </span>
             }
             >
-                Deployment
+                <Deployment serviceNode={serviceNode}/>
             </Tabs.TabPane>
             <Tabs.TabPane
             key={3}

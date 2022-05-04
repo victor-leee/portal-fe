@@ -1,11 +1,10 @@
-import {Button, Col, Form, Input, Radio, RadioChangeEvent, Row} from 'antd';
+import {Button, Form, Input, Radio, RadioChangeEvent, Row} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import React from 'react';
+import {FieldRequired} from './consts';
 
 const serviceNameRegex: RegExp = /^[a-zA-Z-]+$/g;
 const gitRepoRegex: RegExp = /^(http|https):\/\/(www\.)?(\S+)\.\w+\/(\S+)\/(\S+)$/g;
-const externalAccessPrefixRegex: RegExp = /\/\S+/g;
-const mandatoryFieldMessage = 'This field is required';
 
 const CreateService: React.FC<{}> = () => {
 
@@ -31,6 +30,7 @@ const CreateService: React.FC<{}> = () => {
         title='Create Service' 
         visible={visible}
         footer={null}
+        width={'50%'}
         onCancel={() => setVisible(false)}>
             <Form
             name='create service'
@@ -60,7 +60,7 @@ const CreateService: React.FC<{}> = () => {
                 <Form.Item
                 name='name'
                 label='Name'
-                rules={[{required: true, message: mandatoryFieldMessage},
+                rules={[{required: true, message: FieldRequired},
                  {pattern: serviceNameRegex, message: 'Only letters(both upper and lower) and "-" supported'}]}
                 >
                     <Input placeholder='e.g. charge-center'/>
@@ -75,7 +75,7 @@ const CreateService: React.FC<{}> = () => {
                                 return Promise.resolve();
                             }
                             if (value === undefined || (value as string).length === 0) {
-                                return Promise.reject(new Error(mandatoryFieldMessage));
+                                return Promise.reject(new Error(FieldRequired));
                             }
 
                             return Promise.resolve();
@@ -95,10 +95,10 @@ const CreateService: React.FC<{}> = () => {
                     label='Service Type'
                 >
                     <Radio.Group>
-                        <Radio value='sc_rpc'>
+                        <Radio value='sc_rpc' onChange={(e: RadioChangeEvent) => setIsHTTP(false)}>
                             SCRPC
                         </Radio>
-                        <Radio value='http'>
+                        <Radio value='http' onChange={(e: RadioChangeEvent) => setIsHTTP(true)}>
                             HTTP
                         </Radio>
                     </Radio.Group>
@@ -112,7 +112,7 @@ const CreateService: React.FC<{}> = () => {
                                 return Promise.resolve();
                             }
                             if (!value) {
-                                return Promise.reject(new Error(mandatoryFieldMessage));
+                                return Promise.reject(new Error(FieldRequired));
                             }
                             value = parseInt(value);
                             if (isNaN(value) || value <= 0 || value > 65535) {
@@ -129,7 +129,23 @@ const CreateService: React.FC<{}> = () => {
                     name='prefix-mapping'
                     label='External Access Prefix'
                     rules={[
-                        {pattern: externalAccessPrefixRegex, message: 'Must start with /'}
+                        {validator: (_, value) => {
+                            if (!isHTTP) {
+                                return Promise.resolve();
+                            }
+                            if (value === undefined) {
+                                return Promise.reject(new Error(FieldRequired));
+                            }
+                            value = (value as string).trim();
+                            if ((value as string).length === 0) {
+                                return Promise.reject(new Error(FieldRequired));
+                            }
+                            if (!(value as string).startsWith('/')) {
+                                return Promise.reject(new Error('Path must starts with /'));
+                            }
+
+                            return Promise.resolve();
+                        }}
                     ]}
                 >
                     <Input placeholder='/prefix-you-want'/>

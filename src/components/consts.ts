@@ -11,4 +11,7 @@ const buildStages: string[] = [
     'Failure',
 ]
 
-export {FieldRequired, buildStages};
+const stageSuccess = 6;
+const stageFail = 7;
+
+export {FieldRequired, buildStages, stageFail, stageSuccess};

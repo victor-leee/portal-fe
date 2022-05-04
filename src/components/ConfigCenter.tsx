@@ -30,14 +30,14 @@ const ConfigCenter: React.FC<{
     }
 
     const handleSelect = async(e: string) => {
-        const resp = await API().getConfig(serviceNode.completePath, serviceNode.serviceKey, e);
+        const {message: msg} = await API().getConfig(serviceNode.completePath, serviceNode.serviceKey, e);
         setSelectedCfgKey(e);
-        if (!resp.message.keyExist) {
+        if (!msg.keyExist) {
             message.error('key not exist');
             setKeys(original => original.filter(w => w !== e));
             return;
         }
-        setSelectedCfgValue(resp.message.value);
+        setSelectedCfgValue(msg.value);
     }
     
     const handleCfgChange = async(e: React.ChangeEvent<HTMLTextAreaElement>) => {

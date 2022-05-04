@@ -1,8 +1,31 @@
 import {ServiceNode} from '../api/types';
-import {Button, Form, Input, Modal, Row, Select} from 'antd';
+import {Button, Divider, Form, Input, Modal, Row, Select, Steps} from 'antd';
 import React from 'react';
 import { API } from '../api/api';
-import {FieldRequired} from './consts';
+import {FieldRequired, buildStages} from './consts';
+import { CheckOutlined, LoadingOutlined, PauseCircleOutlined, QuestionOutlined } from '@ant-design/icons';
+import { Status } from 'rc-steps/lib/interface';
+
+const iconNotYet = <PauseCircleOutlined />;
+const iconProcessing = <LoadingOutlined />;
+const iconReached = <CheckOutlined />;
+
+const statusWait = "wait";
+const statusDoing = "process";
+const statusDone = "finish";
+const statusError = "error";
+
+const initStatus = () => {
+    const arr: Status[] = new Array(8);
+    arr.fill(statusWait);
+    return arr;
+}
+
+const initIcons = () => {
+    const arr: React.ReactNode[] = new Array(8);
+    arr.fill(iconNotYet);
+    return arr;
+}
 
 const Deployment: React.FC<{
     serviceNode: ServiceNode,
@@ -10,6 +33,8 @@ const Deployment: React.FC<{
 
     const [visible, setVisible] = React.useState(false);
     const [branches, setBranches] = React.useState<string[]>([]);
+    const [statuses, setStatuses] = React.useState<Status[]>(initStatus());
+    const [icons, setIcons] = React.useState<React.ReactNode[]>(initIcons());
 
     React.useEffect(() => {
         const fetchBranches = async() => {
@@ -72,6 +97,16 @@ const Deployment: React.FC<{
                 </Form.Item>
             </Form>
         </Modal>
+
+        <Divider/>
+        <Steps>
+            {buildStages.map((stage, i, a) => <Steps.Step
+            title={buildStages[i]}
+            key={i}
+            status={statuses[i]}
+            icon={icons[i]}
+            />)}
+        </Steps>
         </>
     )
 }

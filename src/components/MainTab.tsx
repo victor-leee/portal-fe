@@ -1,9 +1,10 @@
 import { ServiceNode } from "../api/types";
 import { Tabs } from 'antd';
 import { CloudServerOutlined, InfoCircleOutlined } from "@ant-design/icons";
-import Deployment from './Deployment';
 
+import Deployment from './Deployment';
 import ServiceInfo from './ServiceInfo';
+import ConfigCenter from './ConfigCenter';
 
 const MainTab: React.FC<{
     serviceNode: ServiceNode
@@ -44,7 +45,7 @@ const MainTab: React.FC<{
                 </span>
             }
             >
-                Config
+                <ConfigCenter serviceNode={serviceNode}/>
             </Tabs.TabPane>
         </Tabs>
         </>

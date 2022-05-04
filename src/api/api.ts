@@ -27,9 +27,13 @@ abstract class RPCBase {
     abstract getPipelineStage(ID: string): Promise<Response<number>>;
     abstract putConfig(serviceID: string, serviceKey: string, key: string, value: string): Promise<Response<SCPRCBaseResponse>>;
     abstract getConfig(serviceID: string, serviceKey: string, key: string): Promise<Response<{ baseResponse: SCPRCBaseResponse; keyExist: boolean; value: string; }>>;
+    abstract configKeys(serviceID: string, serviceKey: string): Promise<Response<{ baseResponse: SCPRCBaseResponse; keys: string[] }>>;
 }
 
 class RPCImpl extends RPCBase {
+    async configKeys(serviceID: string, serviceKey: string): Promise<Response<{ baseResponse: SCPRCBaseResponse; keys: string[]; }>> {
+        throw new Error('Method not implemented.');
+    }
     async getServicesByParentID(parentID: number): Promise<Response<ServiceNode[]>> {
         throw new Error('Method not implemented.');
     }
@@ -55,6 +59,18 @@ class RPCImpl extends RPCBase {
 }
 
 class MockRPCImpl extends RPCBase {
+    async configKeys(serviceID: string, serviceKey: string): Promise<Response<{ baseResponse: SCPRCBaseResponse; keys: string[]; }>> {
+        return {
+            code: 200,
+            message: {
+                baseResponse: {
+                    errCode: 0,
+                    errMsg: '',
+                },
+                keys: ['db_config', 'redis_config'],
+            }
+        }
+    }
     async getServicesByParentID(parentID: number): Promise<Response<ServiceNode[]>> {
         if (parentID === 1) {
             return {
@@ -141,7 +157,7 @@ class MockRPCImpl extends RPCBase {
             code: 200,
             message: {
                 errCode: 0,
-                errMsg: "",
+                errMsg: "Success",
             }
         }
     }

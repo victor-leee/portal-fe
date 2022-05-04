@@ -1,5 +1,5 @@
 import {ServiceNode} from '../api/types';
-import {Button, Divider, Form, Input, Modal, Row, Select, Steps} from 'antd';
+import {Button, Divider, Form, Input, InputNumber, Modal, Row, Select, Steps} from 'antd';
 import React from 'react';
 import { API } from '../api/api';
 import {FieldRequired, buildStages} from './consts';
@@ -72,6 +72,9 @@ const Deployment: React.FC<{
             wrapperCol={{span: 16}}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
+            initialValues={{
+                'replicas': 1,
+            }}
             autoComplete='off'
             >
                 <Form.Item
@@ -90,7 +93,7 @@ const Deployment: React.FC<{
                 rules={[{required: true, message: FieldRequired},
                 {type: 'number', min: 1, message:'Replica count must be positive'}]}
                 >
-                    <Input type='number' defaultValue={1}/>
+                    <InputNumber/>
                 </Form.Item>
                 <Form.Item style={{marginLeft: '40%'}}>
                     <Button type='primary' htmlType='submit'>Submit</Button>

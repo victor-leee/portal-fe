@@ -33,7 +33,7 @@ const App: React.FC<{}> = () => {
       </Sider>
       <Layout>
         <Content style={{background: '#ffffff'}}>
-          {currentService === undefined ? 
+          {currentService === undefined || !currentService.isService ? 
           <Alert
           showIcon
           message="Hello there"

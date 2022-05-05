@@ -38,9 +38,12 @@ const Deployment: React.FC<{
     const [branches, setBranches] = React.useState<string[]>([]);
     const [statuses, setStatuses] = React.useState<Status[]>(initStatus());
     const [renderIcons, setRenderIcons] = React.useState<React.ReactElement[]>(initIcons());
-    const [timer, setTimer] = React.useState<NodeJS.Timer>();
+
+    let timer: NodeJS.Timer|undefined = undefined;
 
     React.useEffect(() => {
+        setStatuses(initStatus());
+        setRenderIcons(initIcons());
         const fetchBranches = async() => {
             const {message} = await API().listGithubBranches(serviceNode.ID);
             setBranches(message);
@@ -52,15 +55,7 @@ const Deployment: React.FC<{
                 clearInterval(timer);
             }
         }
-    }, []);
-
-    const onFinish = () => {
-
-    };
-
-    const onFinishFailed = () => {
-
-    };
+    }, [serviceNode.ID, timer]);
 
     const handleSubmit = async(e: React.MouseEvent<HTMLElement, MouseEvent>) => {
         try {
@@ -77,14 +72,20 @@ const Deployment: React.FC<{
     }
 
     const backgroundRefreshStatus = async(runID: string) => {
-        const handle = setInterval(async () => {
+        timer = setInterval(async () => {
             const {message: stageID} = await API().getPipelineStage(runID);
             updateProgressBar(stageID);
-        }, 2000);
-        setTimer(handle);
+        }, 500);
     }
 
     const updateProgressBar = (stageID: number) => {
+        // clear interval if last status
+        if (stageID === stageSuccess || stageID === stageFail) {
+            console.log(timer);
+            if (timer !== undefined) {
+                clearInterval(timer);
+            }
+        }
         setRenderIcons(original => {
             return original.map((v, i, a) => {
                 if (stageID === stageFail) {
@@ -109,7 +110,7 @@ const Deployment: React.FC<{
                 if (stageID === stageFail) {
                     return statusError;
                 }
-                if (stageID == stageSuccess && i <= stageSuccess) {
+                if (stageID === stageSuccess && i <= stageSuccess) {
                     return statusDone;
                 }
 
@@ -142,8 +143,7 @@ const Deployment: React.FC<{
             name='create deployment'
             labelCol={{span: 9}}
             wrapperCol={{span: 16}}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
+            onFinish={handleSubmit}
             initialValues={{
                 'replicas': 1,
             }}
@@ -169,7 +169,7 @@ const Deployment: React.FC<{
                     <InputNumber/>
                 </Form.Item>
                 <Form.Item style={{marginLeft: '40%'}}>
-                    <Button type='primary' htmlType='submit' onClick={handleSubmit}>Submit</Button>
+                    <Button type='primary' htmlType='submit'>Submit</Button>
                 </Form.Item>
             </Form>
         </Modal>

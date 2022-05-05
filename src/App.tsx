@@ -13,9 +13,11 @@ import { Alert, Row, Space } from 'antd';
 const App: React.FC<{}> = () => {
 
   const [currentService, setCurrentService] = React.useState<ServiceNode>();
+  const [selectPath, setSelectPath] = React.useState<ServiceNode[]>();
 
-  const onServiceSelect = (node: ServiceNode|undefined) => {
+  const onServiceSelect = (node: ServiceNode|undefined, path: ServiceNode[]|undefined) => {
     setCurrentService(node);
+    setSelectPath(path);
   };
 
   return (
@@ -25,7 +27,10 @@ const App: React.FC<{}> = () => {
         <Space direction='vertical' size='middle' style={{display: 'flex'}}>
 
         <Row>
-          <CreateService/>
+          <CreateService 
+          parentID={selectPath === undefined ? 0 : selectPath[0].ID}
+          hierarchy={selectPath === undefined ? [] : selectPath?.map(node => node.name).reverse()}
+          />
         </Row>
         <ServiceSelector onServiceSelect={onServiceSelect}/>
 

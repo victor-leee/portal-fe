@@ -1,23 +1,48 @@
-import {Button, Form, Input, Radio, RadioChangeEvent, Row} from 'antd';
+import {Button, Form, Input, Radio, RadioChangeEvent, message} from 'antd';
 import Modal from 'antd/lib/modal/Modal';
 import React from 'react';
+import { CreateServiceNodeRequest } from '../api/types';
 import {FieldRequired} from './consts';
+import {API} from '../api/api';
 
 const serviceNameRegex: RegExp = /^[a-zA-Z-]+$/g;
 const gitRepoRegex: RegExp = /^(http|https):\/\/(www\.)?(\S+)\.\w+\/(\S+)\/(\S+)$/g;
 
-const CreateService: React.FC<{}> = () => {
+const CreateService: React.FC<{
+    parentID: number,
+    hierarchy: string[],
+}> = (
+    {parentID, hierarchy}
+) => {
+
+    const [form] = Form.useForm();
 
     const [visible, setVisible] = React.useState(false);
     const [isService, setIsService] = React.useState(true);
     const [isHTTP, setIsHTTP] = React.useState(false);
 
-    const onFinish = () => {
-
-    }
-
-    const onFinishFailed = () => {
-
+    const onFinish = async() => {
+        try {
+            form.validateFields();
+        }catch(e) {
+            return;
+        }
+        const isService = form.getFieldValue('service-or-dir') as boolean;
+        const name = form.getFieldValue('name') as string;
+        const gitRepoURL = form.getFieldValue('git') as string;
+        const buildFileRelPath = form.getFieldValue('buildFileRelPath') as string;
+        const type = form.getFieldValue('service-type') as string;
+        const customPort = form.getFieldValue('custom-port') as number;
+        const prefixMapping = form.getFieldValue('prefix-mapping') as string;
+        const createServiceRequest: CreateServiceNodeRequest = {
+            name, hierarchy, parentID, isService, gitRepoURL, buildFileRelPath, type, customPort, prefixMapping
+        };
+        
+        const {code} = await API().createService(createServiceRequest);
+        if (code === 200) {
+            message.success('Create Node Success');
+        }
+        setVisible(false);
     }
 
     return (
@@ -37,11 +62,11 @@ const CreateService: React.FC<{}> = () => {
             labelCol={{span: 9}}
             wrapperCol={{span: 16}}
             onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
             initialValues={{
                 'service-or-dir': true,
                 'service-type': 'sc_rpc',
             }}
+            form={form}
             autoComplete='off'>
                 <Form.Item
                 name='service-or-dir'

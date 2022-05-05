@@ -7,7 +7,7 @@ const ConfigCenter: React.FC<{
     serviceNode: ServiceNode
 }> = ({serviceNode}) => {
 
-    const [keys, setKeys] = useState<string[]>([]);
+    const [keys, setKeys] = useState<string[]|null>(null);
     const [newKey, setNewKey] = useState('');
     const [selectedCfgKey, setSelectedCfgKey] = useState('');
     const [selectedCfgValue, setSelectedCfgValue] = useState('');
@@ -18,7 +18,7 @@ const ConfigCenter: React.FC<{
             setKeys(message.keys);
         }
         fetchConfigKeys();
-    }, []);
+    }, [serviceNode.completePath, serviceNode.serviceKey]);
 
     const handleAdd = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -26,17 +26,18 @@ const ConfigCenter: React.FC<{
             message.error('Must provide non empty config key');
             return;
         }
-        setKeys(original => [...original, newKey]);
+        setKeys(original => original === null ? [newKey] : [...original, newKey]);
+        setSelectedCfgKey(newKey);
     }
 
     const handleSelect = async(e: string) => {
         const {message: msg} = await API().getConfig(serviceNode.completePath, serviceNode.serviceKey, e);
-        setSelectedCfgKey(e);
         if (!msg.keyExist) {
-            message.error('key not exist');
-            setKeys(original => original.filter(w => w !== e));
+            message.warn('key not exist on server');
+            setKeys(original => original === null ? null : original.filter(w => w !== e));
             return;
         }
+        setSelectedCfgKey(e);
         setSelectedCfgValue(msg.value);
     }
     
@@ -45,8 +46,10 @@ const ConfigCenter: React.FC<{
     }
 
     const handleSave = async(e: React.MouseEvent<HTMLButtonElement>) => {
-        const {message:{errMsg}} = await API().putConfig(serviceNode.completePath, serviceNode.serviceKey, selectedCfgKey, selectedCfgValue);
-        message.info(errMsg);
+        const {message:{errCode, errMsg}} = await API().putConfig(serviceNode.completePath, serviceNode.serviceKey, selectedCfgKey, selectedCfgValue);
+        if (errCode === 0 && errMsg === "") {
+            message.success('OK');
+        }
     }
 
     return (
@@ -54,6 +57,7 @@ const ConfigCenter: React.FC<{
         <Select
         style={{ width: 300}}
         placeholder='Select a Config Key'
+        value={selectedCfgKey}
         onSelect={handleSelect}
         dropdownRender={menu => (
           <>
@@ -73,7 +77,7 @@ const ConfigCenter: React.FC<{
         )}
         >
             {
-                keys.map(key => (
+                keys === null ? null : keys.map(key => (
                     <Select.Option key={key}>{key}</Select.Option>
                 ))
             }

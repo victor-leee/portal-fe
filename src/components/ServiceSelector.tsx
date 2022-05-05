@@ -34,7 +34,7 @@ function updateTreeData(list: DataNode[], key: React.Key, children: DataNode[]):
 const id2ServiceNode: Map<number, ServiceNode> = new Map();
 
 const ServiceSelector: React.FC<{
-  onServiceSelect: (node: ServiceNode|undefined) => void,
+  onServiceSelect: (node: ServiceNode|undefined, path: ServiceNode[]|undefined) => void,
 }> = ({onServiceSelect}) => {
     const [treeData, setTreeData] = useState<DataNode[]>([]);
 
@@ -76,7 +76,7 @@ const ServiceSelector: React.FC<{
 
     const handleSelect = (k: Key[], e: {selected: boolean}) => {
       if (!e.selected) {
-        onServiceSelect(undefined);
+        onServiceSelect(undefined, undefined);
         return;
       }
       const key = k[0] as number;
@@ -85,7 +85,19 @@ const ServiceSelector: React.FC<{
         message.error('service not found');
         return;
       }
-      onServiceSelect(service);
+
+      const path: ServiceNode[] = [];
+      if (!service.isService) {
+        path.push(service);
+      }
+      let currentNode: ServiceNode|undefined = service;
+      while (currentNode !== undefined) {
+        currentNode = id2ServiceNode.get(currentNode.parentID);
+        if (currentNode !== undefined) {
+          path.push(currentNode);
+        }
+      }
+      onServiceSelect(service, path.length === 0 ? undefined : path);
     }
 
     return (

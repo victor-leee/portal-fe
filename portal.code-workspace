@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../portal-be"
+		},
+		{
+			"path": "../config-backend"
 		}
 	],
 	"settings": {}

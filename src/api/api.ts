@@ -4,14 +4,14 @@ const baseURL = "localhost";
 const port = 80;
 
 type Endpoint = string;
-const endpointGetService: Endpoint = "/query-by-parent-id";
-const endpointCreateService: Endpoint = "/create-service";
-const endpointListGithubBranches: Endpoint = "/list-branches";
-const endpointRunPipeline: Endpoint = "/run-pipeline";
-const endpointGetPipelineStage: Endpoint = "/pipeline-stage";
-const endpointPutConfig: Endpoint = "/put-config";
-const endpointGetConfig: Endpoint = "/get-config";
-const endpointConfigKeys: Endpoint = "/get-config-keys";
+const endpointGetService: Endpoint = "query-by-parent-id";
+const endpointCreateService: Endpoint = "create-service";
+const endpointListGithubBranches: Endpoint = "list-branches";
+const endpointRunPipeline: Endpoint = "run-pipeline";
+const endpointGetPipelineStage: Endpoint = "pipeline-stage";
+const endpointPutConfig: Endpoint = "put-config";
+const endpointGetConfig: Endpoint = "get-config";
+const endpointConfigKeys: Endpoint = "get-config-keys";
 
 abstract class RPCBase {
     protected baseURL: string;
@@ -98,7 +98,7 @@ class RPCImpl extends RPCBase {
     }
 
     async fetchInternal<Req, Resp>(endpoint: Endpoint, body: Req): Promise<Response<Resp>> {
-        return await fetch(endpoint, {
+        return await fetch(`http://${this.baseURL}:${this.port}/${endpoint}`, {
             method: 'POST', // the project uses POST globally
             mode: "cors",
             cache: "no-cache",

@@ -21,3 +21,40 @@ export interface ServiceNode {
     customPort: number,
     prefixMapping: string
 }
+
+export interface GetConfigKeysRequest {
+    serviceID: string;
+    serviceKey: string;
+}
+
+export interface CreateServiceNodeRequest {
+    name: string;
+    hierarchy: string[];
+    parentID: number;
+    isService: boolean;
+    gitRepoURL: string;
+    buildFileRelPath: string;
+    type: string;
+    customPort: number;
+    prefixMapping: string;
+}
+
+export interface RunPipelineRequest {
+    id: number;
+    remoteBranch: string;
+    replicas: number;
+}
+
+// Used both in GetConfig and PutConfig scenarios
+export interface ConfigRequest {
+    serviceID: string;
+    serviceKey: string;
+    key: string;
+    value?: string;
+}
+
+export interface GetConfigResponse {
+    baseResponse: SCPRCBaseResponse;
+    keyExist: boolean;
+    value: string;
+}
